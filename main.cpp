@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 using namespace std;
 
 const int MAX_STOCK = 50;
@@ -48,6 +49,7 @@ public:
 
         Product *newProd = &prodList[numProd];
 
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Enter product name: ";
         getline(cin, newProd->prodName);
 
