@@ -5,6 +5,65 @@ using namespace std;
 const int MAX_STOCK = 50;
 const int MAX_INV = 50;
 
+string getValidString(const string &prompt)
+{
+    string text;
+
+    while (true)
+    {
+        cout << prompt;
+        getline(cin, text);
+        if (text.empty())
+        {
+            cout << "Input can't be empty. Please enter a new value." << endl
+                 << endl;
+            continue;
+        }
+        return text;
+    }
+}
+
+double getValidNumeric(const string &prompt, const string &action)
+{
+    double numVal;
+
+    while (true)
+    {
+        cout << prompt;
+        cin >> numVal;
+
+        if (cin.fail())
+        {
+            cout << "Invalid input, enter a new value." << endl
+                 << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        if (action == "option" && !((int)numVal > 0 && (int)numVal <= 4))
+        {
+            cout << "Choice input should only range from 0 - 4." << endl
+                 << endl;
+            continue;
+        }
+        else if (action == "iniStock" && !((int)numVal > 0 && (int)numVal <= MAX_STOCK))
+        {
+            cout << "Stock should be a positive value less than or equal to " << MAX_STOCK << "." << endl
+                 << endl;
+            continue;
+        }
+        else if (action == "iniPrice" && numVal <= 0)
+        {
+            cout << "Price should only be a positive value." << endl
+                 << endl;
+            continue;
+        }
+        return numVal;
+    }
+}
+
 class Product
 {
 private:
@@ -47,16 +106,9 @@ public:
         }
 
         Product *newProd = &prodList[numProd];
-
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Enter product name: ";
-        getline(cin, newProd->prodName);
-
-        cout << "Enter initial stock: ";
-        cin >> newProd->stock;
-
-        cout << "Enter initial price: ";
-        cin >> newProd->price;
+        newProd->prodName = getValidString("Enter product name: ");
+        newProd->stock = getValidNumeric("Enter initial stock: ", "iniStock");
+        newProd->price = getValidNumeric("Enter initial price: ", "iniPrice");
 
         numProd++;
     }
@@ -64,7 +116,7 @@ public:
     {
         if (isEmpty())
         {
-            cout << "The inventory is currently empty.";
+            cout << "The inventory is currently empty." << endl;
             return;
         }
 
@@ -77,7 +129,7 @@ public:
     {
         if (isEmpty())
         {
-            cout << "The inventory is currently empty.";
+            cout << "The inventory is currently empty." << endl;
             return;
         }
 
@@ -89,11 +141,11 @@ public:
         {
             if (prod == prodList[i].prodName)
             {
-                cout << "Product found!";
+                cout << "Product found!" << endl;
                 return;
             }
         }
-        cout << "Product not found!";
+        cout << "Product not found!" << endl;
     }
 };
 
@@ -112,8 +164,8 @@ int main()
         cout << "2. Display All Products" << endl;
         cout << "3. Search for a Product" << endl;
         cout << "4. Exit" << endl;
-        cout << "Enter your choice: ";
-        cin >> option;
+
+        option = getValidNumeric("Enter your choice: ", "option");
 
         cout << "\n";
 
