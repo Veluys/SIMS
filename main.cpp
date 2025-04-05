@@ -100,5 +100,42 @@ public:
 
 int main()
 {
+    Inventory inv;
+    int option;
+
+    cout << "Welcome to the Simple Inventory Management System!" << endl;
+
+    do
+    {
+        cout << "\n"
+             << "Menu:" << endl;
+        cout << "1. Add Product" << endl;
+        cout << "2. Display All Products" << endl;
+        cout << "3. Search for a Product" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> option;
+
+        cout << "\n";
+
+        switch (option)
+        {
+        case 1:
+            inv.addProd();
+            break;
+        case 2:
+            inv.showInv();
+            break;
+        case 3:
+            inv.searchProd();
+            break;
+        case 4:
+            cout << "Exiting the program. Goodbye!" << endl;
+            break;
+        default:
+            cout << "Invalid option. Please select again." << endl;
+            break;
+        }
+    } while (option != 4);
     return 0;
 }
