@@ -66,6 +66,27 @@ public:
             prodList[i].display();
         }
     }
+    void searchProd()
+    {
+        if (isEmpty())
+        {
+            cout << "The inventory is currently empty.";
+        }
+
+        string prod;
+        cout << "Enter the product name to be search: ";
+        cin >> prod;
+
+        for (size_t i = 0; i < numProd; i++)
+        {
+            if (prod == prodList[i].prodName)
+            {
+                cout << "Product found!";
+                return;
+            }
+        }
+        cout << "Product not found!";
+    }
 };
 
 int main()
