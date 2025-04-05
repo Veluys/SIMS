@@ -14,8 +14,7 @@ private:
 
     void display() const
     {
-        cout << "\n"
-             << "Product Name: " << prodName << endl;
+        cout << "Product Name: " << prodName << endl;
         cout << "Stock: " << stock << endl;
         cout << "Price: " << price << endl;
         cout << "-------------------------------" << endl;
