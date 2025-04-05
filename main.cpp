@@ -28,6 +28,15 @@ class Inventory
     Product prodList[MAX_INV];
     int numProd = 0;
 
+    bool isEmpty()
+    {
+        return numProd == 0;
+    }
+    bool isFull()
+    {
+        return numProd == MAX_INV;
+    }
+
 public:
     void addProd()
     {
