@@ -59,8 +59,14 @@ public:
 
         numProd++;
     }
-    void showInv() const
+    void showInv()
     {
+        if (isEmpty())
+        {
+            cout << "The inventory is currently empty.";
+            return;
+        }
+
         for (size_t i = 0; i < numProd; i++)
         {
             prodList[i].display();
@@ -71,6 +77,7 @@ public:
         if (isEmpty())
         {
             cout << "The inventory is currently empty.";
+            return;
         }
 
         string prod;
