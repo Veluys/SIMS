@@ -40,6 +40,12 @@ class Inventory
 public:
     void addProd()
     {
+        if (isFull())
+        {
+            cout << "The inventory is full, can't add more products.";
+            return;
+        }
+
         Product *newProd = &prodList[numProd];
 
         cout << "Enter product name: ";
