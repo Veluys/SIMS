@@ -153,6 +153,7 @@ public:
             return;
         }
 
+        cout << "Products in Inventory: " << endl;
         for (size_t i = 0; i < numProd; i++)
         {
             prodList[i].display();
