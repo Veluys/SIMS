@@ -215,21 +215,31 @@ public:
         }
 
         Product *product = &prodList[productExistsAt(prodName)];
-        auto updProdName = [](Product *product)
+        bool isNewNameValid = false;
+        auto updProdName = [this, &product, &isNewNameValid]()
         {
             cout << "Current Product Name: " << product->prodName << endl;
-            product->prodName = getValidString("Enter new product name: ");
+            string tempName = getValidString("Enter new product name: ");
+
+            if (this->productExistsAt(tempName) != -1)
+            {
+                cout << "Product already exists!" << endl;
+                return;
+            }
+
+            isNewNameValid = true;
+            product->prodName = tempName;
             cout << "\n";
         };
 
-        auto updStock = [](Product *product)
+        auto updStock = [&product]()
         {
             cout << "Current Stock: " << product->stock << endl;
             product->stock += (int)getValidNumeric("Enter quantity to add (negative to remove): ", "updStock", product->stock);
             cout << "\n";
         };
 
-        auto updPrice = [](Product *product)
+        auto updPrice = [&product]()
         {
             cout << "Current Price: " << product->price << endl;
             product->price += getValidNumeric("Enter price to add (negative to remove): ", "updPrice", product->price);
@@ -251,30 +261,46 @@ public:
         switch (option)
         {
         case 1:
-            updProdName(product);
+            updProdName();
+            if (isNewNameValid == false)
+            {
+                return;
+            }
             break;
         case 2:
-            updStock(product);
+            updStock();
             break;
         case 3:
-            updPrice(product);
+            updPrice();
             break;
         case 4:
-            updProdName(product);
-            updStock(product);
+            updProdName();
+            if (isNewNameValid == false)
+            {
+                return;
+            }
+            updStock();
             break;
         case 5:
-            updProdName(product);
-            updPrice(product);
+            updProdName();
+            if (isNewNameValid == false)
+            {
+                return;
+            }
+            updPrice();
             break;
         case 6:
-            updStock(product);
-            updPrice(product);
+            updStock();
+            updPrice();
             break;
         case 7:
-            updProdName(product);
-            updStock(product);
-            updPrice(product);
+            updProdName();
+            if (isNewNameValid == false)
+            {
+                return;
+            }
+            updStock();
+            updPrice();
             break;
         default:
             cout << "Invalid option. Please select again." << endl;
