@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <cctype>
 using namespace std;
 
 const int MAX_STOCK = 50;
@@ -23,10 +24,9 @@ string getValidString(const string &prompt)
     }
 }
 
-double getValidNumeric(const string &prompt, const string &action)
+double getValidNumeric(const string &prompt, const string &action, const double &currVal = 0)
 {
     double numVal;
-
     while (true)
     {
         cout << prompt;
@@ -42,9 +42,15 @@ double getValidNumeric(const string &prompt, const string &action)
         }
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (action == "option" && !((int)numVal > 0 && (int)numVal <= 4))
+        if (action == "option" && !((int)numVal > 0 && (int)numVal <= 5))
         {
-            cout << "Choice input should only range from 0 - 4." << endl
+            cout << "Choice input should only range from 1 - 5." << endl
+                 << endl;
+            continue;
+        }
+        else if (action == "updOption" && !((int)numVal > 0 && (int)numVal <= 7))
+        {
+            cout << "Choice input should only range from 1 - 7." << endl
                  << endl;
             continue;
         }
@@ -55,6 +61,19 @@ double getValidNumeric(const string &prompt, const string &action)
             continue;
         }
         else if (action == "iniPrice" && numVal <= 0)
+        {
+            cout << "Price should only be a positive value." << endl
+                 << endl;
+            continue;
+        }
+        else if (action == "updStock" && !((int)numVal + currVal <= MAX_STOCK && (int)numVal + currVal > 0))
+        {
+            cout << "Stock should be a positive value less than or equal to " << MAX_STOCK << "." << endl
+                 << endl;
+            continue;
+        }
+        //                  T          && T
+        else if (action == "updPrice" && numVal + currVal <= 0)
         {
             cout << "Price should only be a positive value." << endl
                  << endl;
@@ -167,9 +186,7 @@ public:
             return;
         }
 
-        string prod;
-        cout << "Enter the product name to be search: ";
-        cin >> prod;
+        string prod = getValidString("Enter the product name to be search: ");
 
         if (productExistsAt(prod) != -1)
         {
@@ -180,6 +197,92 @@ public:
         {
             cout << "Product not found!" << endl;
         }
+    }
+    void updProd()
+    {
+        if (isEmpty())
+        {
+            cout << "The inventory is currently empty." << endl;
+            return;
+        }
+
+        string prodName = getValidString("Enter the product name to be updated: ");
+
+        if (productExistsAt(prodName) == -1)
+        {
+            cout << "Product not found!" << endl;
+            return;
+        }
+
+        Product *product = &prodList[productExistsAt(prodName)];
+        auto updProdName = [](Product *product)
+        {
+            cout << "Current Product Name: " << product->prodName << endl;
+            product->prodName = getValidString("Enter new product name: ");
+            cout << "\n";
+        };
+
+        auto updStock = [](Product *product)
+        {
+            cout << "Current Stock: " << product->stock << endl;
+            product->stock += (int)getValidNumeric("Enter quantity to add (negative to remove): ", "updStock", product->stock);
+            cout << "\n";
+        };
+
+        auto updPrice = [](Product *product)
+        {
+            cout << "Current Price: " << product->price << endl;
+            product->price += getValidNumeric("Enter price to add (negative to remove): ", "updPrice", product->price);
+            cout << "\n";
+        };
+
+        cout << "\n"
+             << "Select the information you want to update: " << endl;
+        cout << "1. Product Name" << endl;
+        cout << "2. Product Stock" << endl;
+        cout << "3. Product Price" << endl;
+        cout << "4. Product Name and Stock" << endl;
+        cout << "5. Product Name and Price" << endl;
+        cout << "6. Product Stock and Price" << endl;
+        cout << "7. Product Name, Stock, and Price" << endl;
+
+        int option = getValidNumeric("Enter option: ", "updOption");
+        cout << "\n";
+        switch (option)
+        {
+        case 1:
+            updProdName(product);
+            break;
+        case 2:
+            updStock(product);
+            break;
+        case 3:
+            updPrice(product);
+            break;
+        case 4:
+            updProdName(product);
+            updStock(product);
+            break;
+        case 5:
+            updProdName(product);
+            updPrice(product);
+            break;
+        case 6:
+            updStock(product);
+            updPrice(product);
+            break;
+        case 7:
+            updProdName(product);
+            updStock(product);
+            updPrice(product);
+            break;
+        default:
+            cout << "Invalid option. Please select again." << endl;
+            break;
+        }
+
+        product->display();
+        return;
     }
 };
 
@@ -197,7 +300,8 @@ int main()
         cout << "1. Add Product" << endl;
         cout << "2. Display All Products" << endl;
         cout << "3. Search for a Product" << endl;
-        cout << "4. Exit" << endl;
+        cout << "4. Update a Product" << endl;
+        cout << "5. Exit" << endl;
 
         option = getValidNumeric("Enter your choice: ", "option");
 
@@ -215,12 +319,15 @@ int main()
             inv.searchProd();
             break;
         case 4:
+            inv.updProd();
+            break;
+        case 5:
             cout << "Exiting the program. Goodbye!" << endl;
             break;
         default:
             cout << "Invalid option. Please select again." << endl;
             break;
         }
-    } while (option != 4);
+    } while (option != 5);
     return 0;
 }
