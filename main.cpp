@@ -95,6 +95,31 @@ class Inventory
     {
         return numProd == MAX_INV;
     }
+    int productExistsAt(const string pName) const
+    {
+        for (int i = 0; i < numProd; i++)
+        {
+            const string existingProduct = prodList[i].prodName;
+
+            if (existingProduct.length() != pName.length())
+            {
+                continue;
+            }
+
+            for (int j = 0; j < pName.length(); j++)
+            {
+                if (tolower(existingProduct[j]) != tolower(pName[j]))
+                {
+                    break;
+                }
+                if (j == pName.size() - 1)
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 
 public:
     void addProd()
@@ -137,15 +162,15 @@ public:
         cout << "Enter the product name to be search: ";
         cin >> prod;
 
-        for (size_t i = 0; i < numProd; i++)
+        if (productExistsAt(prod) != -1)
         {
-            if (prod == prodList[i].prodName)
-            {
-                cout << "Product found!" << endl;
-                return;
-            }
+            prodList[productExistsAt(prod)].display();
+            return;
         }
-        cout << "Product not found!" << endl;
+        else
+        {
+            cout << "Product not found!" << endl;
+        }
     }
 };
 
