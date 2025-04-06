@@ -131,7 +131,15 @@ public:
         }
 
         Product *newProd = &prodList[numProd];
-        newProd->prodName = getValidString("Enter product name: ");
+        string pName = getValidString("Enter product name: ");
+
+        if (productExistsAt(pName) != -1)
+        {
+            cout << "Product name already exists!" << endl;
+            return;
+        }
+
+        newProd->prodName = pName;
         newProd->stock = getValidNumeric("Enter initial stock: ", "iniStock");
         newProd->price = getValidNumeric("Enter initial price: ", "iniPrice");
 
