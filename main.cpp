@@ -106,15 +106,17 @@ class Inventory
     Product prodList[MAX_INV];
     int numProd = 0;
 
-    bool isEmpty()
+    bool isEmpty(bool printMSG = false)
     {
+        printMSG &&numProd == 0 ? cout << "The inventory is currently empty." << endl : cout << "";
         return numProd == 0;
     }
-    bool isFull()
+    bool isFull(bool printMSG = false)
     {
+        printMSG &&numProd == MAX_INV ? cout << "The inventory is full, can't add more products." << endl : cout << "";
         return numProd == MAX_INV;
     }
-    int productExistsAt(const string pName) const
+    int productExistsAt(const string pName, bool printFoundMSG = false, bool printNFoundMSG = false) const
     {
         for (int i = 0; i < numProd; i++)
         {
@@ -133,28 +135,28 @@ class Inventory
                 }
                 if (j == pName.size() - 1)
                 {
+                    printFoundMSG ? cout << "Product name already exists!" << endl : cout << "";
                     return i;
                 }
             }
         }
+        printNFoundMSG ? cout << "Product not found!" << endl : cout << "";
         return -1;
     }
 
 public:
     void addProd()
     {
-        if (isFull())
+        if (isFull(true))
         {
-            cout << "The inventory is full, can't add more products.";
             return;
         }
 
         Product *newProd = &prodList[numProd];
         string pName = getValidString("Enter product name: ");
 
-        if (productExistsAt(pName) != -1)
+        if (productExistsAt(pName, true, false) != -1)
         {
-            cout << "Product name already exists!" << endl;
             return;
         }
 
@@ -166,9 +168,8 @@ public:
     }
     void showInv()
     {
-        if (isEmpty())
+        if (isEmpty(true))
         {
-            cout << "The inventory is currently empty." << endl;
             return;
         }
 
@@ -180,37 +181,30 @@ public:
     }
     void searchProd()
     {
-        if (isEmpty())
+        if (isEmpty(true))
         {
-            cout << "The inventory is currently empty." << endl;
             return;
         }
 
         string prod = getValidString("Enter the product name to be search: ");
 
-        if (productExistsAt(prod) != -1)
+        if (productExistsAt(prod, false, true) != -1)
         {
             prodList[productExistsAt(prod)].display();
             return;
         }
-        else
-        {
-            cout << "Product not found!" << endl;
-        }
     }
     void updProd()
     {
-        if (isEmpty())
+        if (isEmpty(true))
         {
-            cout << "The inventory is currently empty." << endl;
             return;
         }
 
         string prodName = getValidString("Enter the product name to be updated: ");
 
-        if (productExistsAt(prodName) == -1)
+        if (productExistsAt(prodName, false, true) == -1)
         {
-            cout << "Product not found!" << endl;
             return;
         }
 
@@ -221,9 +215,8 @@ public:
             cout << "Current Product Name: " << product->prodName << endl;
             string tempName = getValidString("Enter new product name: ");
 
-            if (this->productExistsAt(tempName) != -1)
+            if (this->productExistsAt(tempName, true, false) != -1)
             {
-                cout << "Product already exists!" << endl;
                 return;
             }
 
