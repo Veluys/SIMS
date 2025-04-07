@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include <cctype>
+#include <functional>
 using namespace std;
 
 const int MAX_STOCK = 50;
@@ -23,10 +24,10 @@ string getValidString(const string &prompt)
         return text;
     }
 }
-
-double getValidNumeric(const string &prompt, const string &action, const double &currVal = 0)
+template <typename T>
+T getValidNumeric(const string &prompt, function<bool(T)> isValid, const string &failMsg)
 {
-    double numVal;
+    T numVal;
     while (true)
     {
         cout << prompt;
@@ -34,51 +35,20 @@ double getValidNumeric(const string &prompt, const string &action, const double 
 
         if (cin.fail())
         {
-            cout << "Invalid input, enter a new value." << endl
-                 << endl;
+            cout << "Invalid input. Please enter a new value\n\n";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
         }
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (action == "option" && !((int)numVal > 0 && (int)numVal <= 5))
+        if (!isValid(numVal))
         {
-            cout << "Choice input should only range from 1 - 5." << endl
+            cout << failMsg << endl
                  << endl;
             continue;
         }
-        else if (action == "updOption" && !((int)numVal > 0 && (int)numVal <= 7))
-        {
-            cout << "Choice input should only range from 1 - 7." << endl
-                 << endl;
-            continue;
-        }
-        else if (action == "iniStock" && !((int)numVal > 0 && (int)numVal <= MAX_STOCK))
-        {
-            cout << "Stock should be a positive value less than or equal to " << MAX_STOCK << "." << endl
-                 << endl;
-            continue;
-        }
-        else if (action == "iniPrice" && numVal <= 0)
-        {
-            cout << "Price should only be a positive value." << endl
-                 << endl;
-            continue;
-        }
-        else if (action == "updStock" && !((int)numVal + currVal <= MAX_STOCK && (int)numVal + currVal > 0))
-        {
-            cout << "Stock should be a positive value less than or equal to " << MAX_STOCK << "." << endl
-                 << endl;
-            continue;
-        }
-        //                  T          && T
-        else if (action == "updPrice" && numVal + currVal <= 0)
-        {
-            cout << "Price should only be a positive value." << endl
-                 << endl;
-            continue;
-        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         return numVal;
     }
 }
@@ -161,8 +131,10 @@ public:
         }
 
         newProd->prodName = pName;
-        newProd->stock = getValidNumeric("Enter initial stock: ", "iniStock");
-        newProd->price = getValidNumeric("Enter initial price: ", "iniPrice");
+        newProd->stock += getValidNumeric<int>("Enter initial stock: ", [](int pStock)
+                                               { return pStock > 0 && pStock <= MAX_STOCK; }, "Stock should be a positive value less than or equal to 50");
+        newProd->price = getValidNumeric<double>("Enter initial price: ", [](double pPrice)
+                                                 { return pPrice > 0; }, "Price should only be a positive value.");
 
         numProd++;
     }
@@ -228,14 +200,16 @@ public:
         auto updStock = [&product]()
         {
             cout << "Current Stock: " << product->stock << endl;
-            product->stock += (int)getValidNumeric("Enter quantity to add (negative to remove): ", "updStock", product->stock);
+            product->stock += getValidNumeric<int>("Enter quantity to add (negative to remove): ", [&product](int pStock)
+                                                   { return pStock + product->stock > 0 && pStock + product->stock <= MAX_STOCK; }, "Stock should be a positive value less than or equal to 50");
             cout << "\n";
         };
 
         auto updPrice = [&product]()
         {
             cout << "Current Price: " << product->price << endl;
-            product->price += getValidNumeric("Enter price to add (negative to remove): ", "updPrice", product->price);
+            product->price += getValidNumeric<double>("Enter price to add (negative to remove): ", [&product](double pPrice)
+                                                      { return pPrice > 0; }, "Price should only be a positive value.");
             cout << "\n";
         };
 
@@ -249,7 +223,8 @@ public:
         cout << "6. Product Stock and Price" << endl;
         cout << "7. Product Name, Stock, and Price" << endl;
 
-        int option = getValidNumeric("Enter option: ", "updOption");
+        int option = getValidNumeric<int>("Enter option: ", [](int opt)
+                                          { return opt > 0 && opt <= 7; }, "Choice input should only range from 1 - 7.");
         cout << "\n";
         switch (option)
         {
@@ -322,7 +297,8 @@ int main()
         cout << "4. Update a Product" << endl;
         cout << "5. Exit" << endl;
 
-        option = getValidNumeric("Enter your choice: ", "option");
+        option = getValidNumeric<int>("Enter option: ", [](int opt)
+                                      { return opt > 0 && opt <= 5; }, "Choice input should only range from 1 - 5.");
 
         cout << "\n";
 
