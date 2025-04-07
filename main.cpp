@@ -90,6 +90,33 @@ private:
     int stock = 0;
     double price = 0;
 
+public:
+    void changeProdName(const string &pName)
+    {
+        prodName = pName;
+    }
+    void changeStock(const int &pStock)
+    {
+        stock += pStock;
+    }
+    void changePrice(const double &pPrice)
+    {
+        price += pPrice;
+    }
+
+    string getName() const
+    {
+        return prodName;
+    }
+    int getStock() const
+    {
+        return stock;
+    }
+    double getPrice() const
+    {
+        return price;
+    }
+
     void display() const
     {
         cout << "Product Name: " << prodName << endl;
@@ -97,8 +124,6 @@ private:
         cout << "Price: " << price << endl;
         cout << "-------------------------------" << endl;
     }
-
-    friend class Inventory;
 };
 
 class Inventory
@@ -120,7 +145,7 @@ class Inventory
     {
         for (int i = 0; i < numProd; i++)
         {
-            const string existingProduct = prodList[i].prodName;
+            const string existingProduct = prodList[i].getName();
 
             if (existingProduct.length() != pName.length())
             {
@@ -160,9 +185,9 @@ public:
             return;
         }
 
-        newProd->prodName = pName;
-        newProd->stock = getValidNumeric("Enter initial stock: ", "iniStock");
-        newProd->price = getValidNumeric("Enter initial price: ", "iniPrice");
+        newProd->changeProdName(pName);
+        newProd->changeStock(getValidNumeric("Enter initial stock: ", "iniStock"));
+        newProd->changePrice(getValidNumeric("Enter initial price: ", "iniPrice"));
 
         numProd++;
     }
@@ -212,7 +237,7 @@ public:
         bool isNewNameValid = false;
         auto updProdName = [this, &product, &isNewNameValid]()
         {
-            cout << "Current Product Name: " << product->prodName << endl;
+            cout << "Current Product Name: " << product->getName() << endl;
             string tempName = getValidString("Enter new product name: ");
 
             if (this->productExistsAt(tempName, true, false) != -1)
@@ -221,21 +246,21 @@ public:
             }
 
             isNewNameValid = true;
-            product->prodName = tempName;
+            product->changeProdName(tempName);
             cout << "\n";
         };
 
         auto updStock = [&product]()
         {
-            cout << "Current Stock: " << product->stock << endl;
-            product->stock += (int)getValidNumeric("Enter quantity to add (negative to remove): ", "updStock", product->stock);
+            cout << "Current Stock: " << product->getStock() << endl;
+            product->changeStock((int)getValidNumeric("Enter quantity to add (negative to remove): ", "updStock", product->getStock()));
             cout << "\n";
         };
 
         auto updPrice = [&product]()
         {
-            cout << "Current Price: " << product->price << endl;
-            product->price += getValidNumeric("Enter price to add (negative to remove): ", "updPrice", product->price);
+            cout << "Current Price: " << product->getPrice() << endl;
+            product->changePrice(getValidNumeric("Enter price to add (negative to remove): ", "updPrice", product->getPrice()));
             cout << "\n";
         };
 
